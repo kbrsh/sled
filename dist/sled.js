@@ -102,31 +102,35 @@
     Sled.prototype.handleCursor = function(e) {
       var selection = document.getSelection();
     
-      var startNode = selection.focusNode.parentNode;
-      var endNode = selection.anchorNode.parentNode;
+      var focusNode = selection.focusNode;
     
-      if(startNode.__sledIndex__ !== undefined) {
-        var start = selection.focusOffset;
-        var end = selection.anchorOffset;
-        if(end < start) {
-          var tmp = start;
-          start = end;
-          end = tmp;
+      if(focusNode !== null) {
+        var startNode = focusNode.parentNode;
+        var endNode = selection.anchorNode.parentNode;
+    
+        if(startNode.__sledIndex__ !== undefined) {
+          var start = selection.focusOffset;
+          var end = selection.anchorOffset;
+          if(end < start) {
+            var tmp = start;
+            start = end;
+            end = tmp;
+          }
+    
+          var startNodeIndex = startNode.__sledIndex__;
+          var endNodeIndex = endNode.__sledIndex__;
+          if(endNodeIndex < startNodeIndex) {
+            var tmp = startNodeIndex;
+            startNodeIndex = endNodeIndex;
+            endNodeIndex = tmp;
+          }
+    
+          this.cursorStart = start;
+          this.cursorEnd = end;
+    
+          this.nodeStart = startNodeIndex;
+          this.nodeEnd = endNodeIndex;
         }
-    
-        var startNodeIndex = startNode.__sledIndex__;
-        var endNodeIndex = endNode.__sledIndex__;
-        if(endNodeIndex < startNodeIndex) {
-          var tmp = startNodeIndex;
-          startNodeIndex = endNodeIndex;
-          endNodeIndex = tmp;
-        }
-    
-        this.cursorStart = start;
-        this.cursorEnd = end;
-    
-        this.nodeStart = startNodeIndex;
-        this.nodeEnd = endNodeIndex;
       }
     }
     
