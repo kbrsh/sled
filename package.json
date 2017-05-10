@@ -1,0 +1,28 @@
+{
+  "name": "sledjs",
+  "version": "0.0.0",
+  "description": "Flexibile Rich Text Editor",
+  "main": "dist/sled.min.js",
+  "scripts": {
+    "build": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KingPixil/sled.git"
+  },
+  "author": "Kabir Shah",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KingPixil/sled/issues"
+  },
+  "homepage": "https://github.com/KingPixil/sled#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-header": "^1.8.8",
+    "gulp-include": "^2.3.1",
+    "gulp-replace": "^0.5.4",
+    "gulp-size": "^2.1.0",
+    "gulp-uglify": "^2.1.2"
+  }
+}
