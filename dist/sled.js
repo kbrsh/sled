@@ -68,23 +68,25 @@
     }
     
     Sled.prototype.editText = function(e) {
-      var cursorStart = this.cursorStart;
-      var cursorEnd = this.cursorEnd;
-      var nodeStart = this.nodeStart;
-      var nodeEnd = this.nodeEnd;
+      if(e.which !== undefined && e.which > 0 && e.ctrlKey === false && e.metaKey === false && e.altKey === false && e.ctrlKey !== 8) {
+        var cursorStart = this.cursorStart;
+        var cursorEnd = this.cursorEnd;
+        var nodeStart = this.nodeStart;
+        var nodeEnd = this.nodeEnd;
     
-      var data = this.data;
+        var data = this.data;
     
-      var node = null;
-      var content = null;
+        var node = null;
+        var content = null;
     
-      var key = e.key;
+        var key = e.key;
     
-      if(cursorStart === cursorEnd) {
-        node = data[nodeStart];
-        content = node.content;
+        if(cursorStart === cursorEnd) {
+          node = data[nodeStart];
+          content = node.content;
     
-        node.content = content.slice(0, cursorStart) + key + content.slice(cursorStart);
+          node.content = content.slice(0, cursorStart) + key + content.slice(cursorStart);
+        }
       }
     }
     
