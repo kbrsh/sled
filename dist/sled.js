@@ -32,7 +32,7 @@
       this.el = document.querySelector(el);
     
       // Setup Data
-      this.data = [];
+      this.data = [createVNode("p", "")];
     
       // Selected Node Positions
       this.nodeStart = 0;
