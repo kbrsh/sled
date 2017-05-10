@@ -55,6 +55,10 @@
         self.editText(String.fromCharCode(e.keyCode));
       });
     
+      this.el.addEventListener("paste", function(e) {
+        self.editText(e.clipboardData.getData('Text'));
+      });
+    
       this.el.addEventListener("keydown", function(e) {
         // self.editAction(e);
       });
