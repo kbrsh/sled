@@ -77,6 +77,15 @@ Sled.prototype.editText = function(text) {
     content = node.content;
 
     node.content = content.slice(0, cursorStart) + text + content.slice(cursorStart);
+  } else {
+    if(nodeStart === nodeEnd) {
+      node = data[nodeStart];
+      content = node.content;
+
+      node.content = content.slice(0, cursorStart) + text + content.slice(cursorEnd);
+    } else {
+
+    }
   }
 }
 
