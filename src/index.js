@@ -141,6 +141,12 @@ Sled.prototype.build = function() {
       node = createNode(vnode, i);
       el.appendChild(node);
     } else {
+      if(node.nodeName.toLowerCase() !== vnode.type) {
+        var oldNode = node;
+        node = createNode(vnode, i);
+        el.replaceChild(node, oldNode);
+      }
+
       if(i !== node.__sledIndex__) {
         node.__sledIndex__ = i;
       }
