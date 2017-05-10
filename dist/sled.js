@@ -15,7 +15,7 @@
       }
     }
     
-    var createNode = function(vnode, index, br) {
+    var createNode = function(vnode, index) {
       var node = document.createElement(vnode.type);
       node.textContent = vnode.content;
       node.__sledIndex__ = index;
@@ -133,7 +133,7 @@
         var vnode = data[i];
     
         if(node === null) {
-          node = createNode(vnode, i, false);
+          node = createNode(vnode, i);
           el.appendChild(node);
         } else if(i !== node.__sledIndex__) {
           node.__sledIndex__ = i;
