@@ -79,7 +79,7 @@ Sled.prototype.editText = function(text) {
       node.content = content.slice(0, cursorStart) + text + content.slice(cursorEnd);
     } else {
       var nodeEndContent = data[nodeEnd].content;
-      
+
       if(cursorStart === 0) {
         node.content = text;
       } else {
@@ -90,7 +90,7 @@ Sled.prototype.editText = function(text) {
         node.content += nodeEndContent.slice(cursorEnd);
       }
 
-      for(var i = nodeStart + 1; i < nodeEnd + 1; i++) {
+      for(var i = nodeEnd; i < nodeStart; i++) {
         data.splice(i, 1);
       }
     }
