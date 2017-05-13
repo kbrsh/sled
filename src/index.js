@@ -95,6 +95,8 @@ Sled.prototype.editText = function(text) {
       }
     }
   }
+
+  this.updateIndex();
 }
 
 Sled.prototype.handleCursor = function(e) {
@@ -135,6 +137,17 @@ Sled.prototype.handleCursor = function(e) {
 Sled.prototype.load = function(data) {
   this.data = data;
   this.build();
+}
+
+Sled.prototype.updateIndex = function() {
+  var data = this.data;
+  var node = this.el.firstChild;
+
+  for(var i = 0; i < data.length; i++) {
+    if(node.__sledIndex__ !== i) {
+      node.__sledIndex__ = i;
+    }
+  }
 }
 
 Sled.prototype.build = function() {
