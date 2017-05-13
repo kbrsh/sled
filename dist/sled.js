@@ -79,22 +79,30 @@
     
       var data = this.data;
     
-      var node = null;
-      var content = null;
+      var node = data[nodeStart];
+      var content = node.content;
     
       if(cursorStart === cursorEnd) {
-        node = data[nodeStart];
-        content = node.content;
-    
         node.content = content.slice(0, cursorStart) + text + content.slice(cursorStart);
       } else {
         if(nodeStart === nodeEnd) {
-          node = data[nodeStart];
-          content = node.content;
-    
           node.content = content.slice(0, cursorStart) + text + content.slice(cursorEnd);
         } else {
+          var nodeEndContent = data[nodeEnd].content;
+          
+          if(cursorStart === 0) {
+            node.content = text;
+          } else {
+            node.content = content.slice(0, cursorStart) + text;
+          }
     
+          if(cursorEnd !== nodeEndContent.length) {
+            node.content += nodeEndContent.slice(cursorEnd);
+          }
+    
+          for(var i = nodeStart + 1; i < nodeEnd + 1; i++) {
+            data.splice(i, 1);
+          }
         }
       }
     }
