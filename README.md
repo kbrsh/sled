@@ -4,9 +4,24 @@ Rich text editor
 
 ## Usage
 
+Initialize:
+
 ```js
 new Sled("#editor");
 ```
+
+To get data:
+
+```js
+editor.data;
+```
+
+To load dat:
+
+```js
+editor.load(data);
+```
+
 
 ## License
 
