@@ -13,7 +13,7 @@ new Sled("#editor");
 To get data:
 
 ```js
-editor.data;
+editor.data();
 ```
 
 To load dat:

@@ -21,8 +21,8 @@ function Sled(el) {
   // Get Element
   this.el = document.querySelector(el);
 
-  // Setup Data
-  this.data = [createVNode("p", "")];
+  // Setup Initial Node
+  this.el.appendChild(createNode(createVNode("p", "")));
 
   // Set Content Editable
   this.el.setAttribute("contenteditable", "true");
@@ -60,6 +60,10 @@ Sled.prototype.editAction = function(e) {
 Sled.prototype.load = function(data) {
   this.data = data;
   this.build();
+}
+
+Sled.prototype.data = function() {
+  
 }
 
 Sled.prototype.build = function() {
