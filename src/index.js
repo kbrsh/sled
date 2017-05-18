@@ -13,7 +13,7 @@ var createNode = function(vnode, index) {
   var node = null;
 
   if(type === "#text") {
-    node = document.createTextNode("")
+    node = document.createTextNode(node.content);
   } else {
     node = document.createElement(vnode.type);
     if(children.length !== 0) {
