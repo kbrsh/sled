@@ -1,20 +1,38 @@
-var createVNode = function(tag, content) {
+var createVNode = function(tag, content, children) {
   return {
     type: tag,
-    content: content
+    content: content,
+    children: children
   }
 }
 
 var createNode = function(vnode, index) {
   var node = document.createElement(vnode.type);
   node.textContent = vnode.content;
-  node.__sledIndex__ = index;
 
   if(vnode.content.length === 0) {
     node.appendChild(document.createElement("br"));
   }
 
   return node;
+}
+
+var appendChildren = function(node, children) {
+  for(var i = 0; i < children.length; i++) {
+    var child = children[i];
+    var childNode = createNode(child);
+    node.appendChild(childNode);
+    if(child.children.length !== 0) {
+      appendChildren(childNode, child.children);
+    }
+  }
+}
+
+var removeChildren = function(node) {
+  var child = null;
+  while((child = node.firstChild) !== null) {
+    node.removeChild(child);
+  }
 }
 
 function Sled(el) {
@@ -44,9 +62,6 @@ function Sled(el) {
   this.el.addEventListener("keydown", function(e) {
     self.editAction(e);
   });
-
-  // Setup Initial Text
-  this.build();
 }
 
 Sled.prototype.editText = function(text) {
@@ -58,15 +73,11 @@ Sled.prototype.editAction = function(e) {
 }
 
 Sled.prototype.load = function(data) {
-  this.data = data;
-  this.build();
+  removeChildren(this.el);
+  appendChildren(this.el, data);
 }
 
 Sled.prototype.data = function() {
-  
-}
-
-Sled.prototype.build = function() {
 
 }
 
