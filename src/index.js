@@ -135,8 +135,29 @@ Sled.prototype.load = function(data) {
   appendChildren(this.el, data);
 }
 
-Sled.prototype.data = function() {
+Sled.prototype.data = function(el) {
+  if(el === undefined) {
+    el = this.el;
+  }
 
+  var data = [];
+  var node = el.firstChild;
+
+  while(node !== null) {
+    var vnode = null;
+
+    if(node.nodeName === "#text") {
+      vnode = createVNode("#text", node.textContent, []);
+    } else {
+      vnode = createVNode(node.nodeName.toLowerCase(), "", this.data(node));
+    }
+
+    data.push(vnode);
+    
+    node = node.nextSibling;
+  }
+
+  return data;
 }
 
 Sled.version = "__VERSION__";
