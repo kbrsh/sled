@@ -13,7 +13,7 @@ var createNode = function(vnode, index) {
   var node = null;
 
   if(type === "#text") {
-    node = document.createTextNode(node.content);
+    node = document.createTextNode(vnode.content);
   } else {
     node = document.createElement(vnode.type);
     if(children.length !== 0) {
@@ -96,6 +96,7 @@ Sled.prototype.editAction = function(e) {
     var focusNode = selection.focusNode;
     var normalizedFocusNode = focusNode.nodeType === 3 ? focusNode.parentNode : focusNode;
     var focusNodeContent = focusNode.textContent;
+    var focusNodeContentLength = focusNodeContent.length;
     var focusOffset = selection.focusOffset;
     var anchorOffset = selection.anchorOffset;
 
@@ -111,7 +112,7 @@ Sled.prototype.editAction = function(e) {
 
       // Setup content for selected node, and new node
       var newContent = "";
-      var newNodeContent = focusNodeContent.substring(anchorOffset, focusNodeContent.length);
+      var newNodeContent = focusNodeContent.substring(anchorOffset, focusNodeContentLength);
 
       // If there is content in the selected node, generate the new content
       if(focusNodeContent.length !== 0) {
@@ -124,7 +125,7 @@ Sled.prototype.editAction = function(e) {
       }
 
       // Create a new node
-      var newNode = document.createElement(normalizedFocusNode.nodeName.toLowerCase());
+      var newNode = document.createElement(focusOffset === focusNodeContentLength ? "p" : normalizedFocusNode.nodeName.toLowerCase());
 
       // Add content for the new node
       if(newNodeContent.length === 0) {
