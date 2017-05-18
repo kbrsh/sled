@@ -16,7 +16,7 @@ To get data:
 editor.data();
 ```
 
-To load dat:
+To load data:
 
 ```js
 editor.load(data);
