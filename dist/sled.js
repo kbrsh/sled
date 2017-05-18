@@ -54,6 +54,15 @@
       }
     }
     
+    var moveCursorEnd = function(node) {
+      var selection = document.getSelection();
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    
     function Sled(el) {
       // Get Element
       this.el = document.querySelector(el);
@@ -134,8 +143,9 @@
             newNode.textContent = newNodeContent;
           }
     
-          // Insert the new node
+          // Insert the new node and move cursor
           el.insertBefore(newNode, normalizedFocusNode.nextSibling);
+          moveCursorEnd(newNode);
         }
       }
     }
@@ -163,7 +173,7 @@
         }
     
         data.push(vnode);
-        
+    
         node = node.nextSibling;
       }
     
