@@ -69,12 +69,16 @@ function Sled(el) {
   });
 
   this.el.addEventListener("paste", function(e) {
-    self.editText(e.clipboardData.getData('Text'));
+    self.formatPaste(e);
   });
 
   this.el.addEventListener("keydown", function(e) {
     self.editAction(e);
   });
+}
+
+Sled.prototype.formatPaste = function(e) {
+
 }
 
 Sled.prototype.editText = function(text) {
