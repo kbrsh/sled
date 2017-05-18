@@ -28,12 +28,7 @@ var createNode = function(vnode, index) {
 
 var appendChildren = function(node, children) {
   for(var i = 0; i < children.length; i++) {
-    var child = children[i];
-    var childNode = createNode(child);
-    node.appendChild(childNode);
-    if(child.children.length !== 0) {
-      appendChildren(childNode, child.children);
-    }
+    node.appendChild(createNode(children[i]));
   }
 }
 
@@ -44,11 +39,11 @@ var removeChildren = function(node) {
   }
 }
 
-var moveCursorEnd = function(node) {
+var moveCursorStart = function(node) {
   var selection = document.getSelection();
   var range = document.createRange();
   range.selectNodeContents(node);
-  range.collapse(false);
+  range.collapse(true);
   selection.removeAllRanges();
   selection.addRange(range);
 }
@@ -134,9 +129,11 @@ Sled.prototype.editAction = function(e) {
         newNode.textContent = newNodeContent;
       }
 
-      // Insert the new node and move cursor
+      // Insert the new node
       el.insertBefore(newNode, normalizedFocusNode.nextSibling);
-      moveCursorEnd(newNode);
+
+      // Move cursor
+      moveCursorStart(newNode);
     }
   }
 }
