@@ -130,7 +130,7 @@
           }
     
           // Create a new node
-          var newNode = document.createElement(focusOffset === focusNodeContentLength ? "p" : normalizedFocusNode.nodeName.toLowerCase());
+          var newNode = document.createElement("p");
     
           // Add content for the new node
           if(newNodeContent.length === 0) {
