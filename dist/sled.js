@@ -36,6 +36,10 @@
       return node;
     }
     
+    var normalizeNode = function(node) {
+      return node.nodeType === 3 ? node.parentNode : node;
+    }
+    
     var appendChildren = function(node, children) {
       for(var i = 0; i < children.length; i++) {
         node.appendChild(createNode(children[i]));
@@ -75,7 +79,7 @@
       var self = this;
     
       this.el.addEventListener("keypress", function(e) {
-        self.editText(String.fromCharCode(e.keyCode));
+        self.editText(e);
       });
     
       this.el.addEventListener("paste", function(e) {
@@ -91,8 +95,50 @@
     
     }
     
-    Sled.prototype.editText = function(text) {
+    Sled.prototype.editText = function(e) {
+      var text = String.fromCharCode(e.keyCode);
     
+      if(text === " ") {
+        var selection = document.getSelection();
+        var focusNode = selection.focusNode;
+        var normalizedFocusNode = normalizeNode(focusNode);
+        var focusOffset = selection.focusOffset;
+        var focusNodeContent = focusNode.textContent;
+        var focusNodeContentLength = focusNodeContent.length;
+    
+        if(focusNodeContent[0] === "#" && focusNodeContent[focusOffset - 1] === "#") {
+          var char = focusNodeContent[0];
+          var i = 1;
+          var level = 1;
+          var abort = false;
+    
+          while(char === "#" && i < focusNodeContentLength) {
+            if(char === " ") {
+              abort = true;
+              break;
+            } else {
+              level++;
+            }
+    
+            char = focusNodeContent[i++];
+          }
+    
+          if(abort === false) {
+            e.preventDefault();
+    
+            var newNode = document.createElement("h" + level.toString());
+            var newContent = focusNodeContent.substring(level);
+    
+            if(newContent.length === 0) {
+              newNode.appendChild(document.createElement("br"));
+            } else {
+              newNode.textContent = newContent;
+            }
+    
+            normalizedFocusNode.parentNode.replaceChild(newNode, normalizedFocusNode);
+          }
+        }
+      }
     }
     
     Sled.prototype.editAction = function(e) {
@@ -103,7 +149,7 @@
         var selection = document.getSelection();
     
         var focusNode = selection.focusNode;
-        var normalizedFocusNode = focusNode.nodeType === 3 ? focusNode.parentNode : focusNode;
+        var normalizedFocusNode = normalizeNode(focusNode);
         var focusNodeContent = focusNode.textContent;
         var focusNodeContentLength = focusNodeContent.length;
         var focusOffset = selection.focusOffset;
