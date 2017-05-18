@@ -17,11 +17,20 @@
     }
     
     var createNode = function(vnode, index) {
-      var node = document.createElement(vnode.type);
-      node.textContent = vnode.content;
+      var type = vnode.type;
+      var children = vnode.children;
     
-      if(vnode.content.length === 0) {
-        node.appendChild(document.createElement("br"));
+      var node = null;
+    
+      if(type === "#text") {
+        node = document.createTextNode("")
+      } else {
+        node = document.createElement(vnode.type);
+        if(children.length !== 0) {
+          for(var i = 0; i < children.length; i++) {
+            node.appendChild(createNode(children[i]));
+          }
+        }
       }
     
       return node;
@@ -50,7 +59,7 @@
       this.el = document.querySelector(el);
     
       // Setup Initial Node
-      this.el.appendChild(createNode(createVNode("p", "")));
+      this.el.appendChild(createNode(createVNode("p", "", [createVNode("br", "", [])])));
     
       // Set Content Editable
       this.el.setAttribute("contenteditable", "true");
@@ -79,7 +88,56 @@
     }
     
     Sled.prototype.editAction = function(e) {
+      var el = this.el;
+      var keyCode = e.keyCode;
     
+      if(keyCode === 13) {
+        var selection = document.getSelection();
+    
+        var focusNode = selection.focusNode;
+        var normalizedFocusNode = focusNode.nodeType === 3 ? focusNode.parentNode : focusNode;
+        var focusNodeContent = focusNode.textContent;
+        var focusOffset = selection.focusOffset;
+        var anchorOffset = selection.anchorOffset;
+    
+        if(focusOffset > anchorOffset) {
+          var tmp = focusOffset;
+          focusOffset = anchorOffset;
+          anchorOffset = tmp;
+        }
+    
+        // Check if selection is within a single node
+        if(focusNode === selection.anchorNode) {
+          e.preventDefault();
+    
+          // Setup content for selected node, and new node
+          var newContent = "";
+          var newNodeContent = focusNodeContent.substring(anchorOffset, focusNodeContent.length);
+    
+          // If there is content in the selected node, generate the new content
+          if(focusNodeContent.length !== 0) {
+            newContent = focusNodeContent.substring(0, focusOffset);
+          }
+    
+          // Update content of the selected node
+          if(focusNodeContent !== newContent) {
+            focusNode.textContent = newContent;
+          }
+    
+          // Create a new node
+          var newNode = document.createElement(normalizedFocusNode.nodeName.toLowerCase());
+    
+          // Add content for the new node
+          if(newNodeContent.length === 0) {
+            newNode.appendChild(document.createElement("br"));
+          } else {
+            newNode.textContent = newNodeContent;
+          }
+    
+          // Insert the new node
+          el.insertBefore(newNode, normalizedFocusNode.nextSibling);
+        }
+      }
     }
     
     Sled.prototype.load = function(data) {
