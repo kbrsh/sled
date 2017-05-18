@@ -123,7 +123,7 @@
             char = focusNodeContent[i++];
           }
     
-          if(abort === false) {
+          if(abort === false && level < 7) {
             e.preventDefault();
     
             var newNode = document.createElement("h" + level.toString());
