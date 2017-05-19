@@ -132,7 +132,6 @@ Sled.prototype.editText = function(e) {
 }
 
 Sled.prototype.editAction = function(e) {
-  var el = this.el;
   var keyCode = e.keyCode;
 
   if(keyCode === 13) {
@@ -180,7 +179,12 @@ Sled.prototype.editAction = function(e) {
       }
 
       // Insert the new node
-      el.insertBefore(newNode, normalizedFocusNode.nextSibling);
+      var parent = this.el;
+      var outerNode = focusNode;
+      while(outerNode.parentNode !== parent) {
+        outerNode = outerNode.parentNode;
+      }
+      parent.insertBefore(newNode, outerNode.nextSibling);
 
       // Move cursor
       moveCursorStart(newNode);
@@ -189,8 +193,9 @@ Sled.prototype.editAction = function(e) {
 }
 
 Sled.prototype.load = function(data) {
-  removeChildren(this.el);
-  appendChildren(this.el, data);
+  var el = this.el;
+  removeChildren(el);
+  appendChildren(el, data);
 }
 
 Sled.prototype.data = function(el) {
