@@ -17,12 +17,14 @@
   },
   "homepage": "https://github.com/KingPixil/sled#readme",
   "devDependencies": {
+    "buble": "^0.15.2",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
-    "gulp-header": "^1.8.8",
+    "gulp-header": "^1.8.9",
     "gulp-include": "^2.3.1",
-    "gulp-replace": "^0.5.4",
+    "gulp-replace": "^0.6.1",
     "gulp-size": "^2.1.0",
-    "gulp-uglify": "^2.1.2"
+    "gulp-uglify": "^3.0.0",
+    "uglify-js": "^3.0.27"
   }
 }

@@ -10,18 +10,6 @@ Initialize:
 new Sled("#editor");
 ```
 
-To get data:
-
-```js
-editor.data();
-```
-
-To load data:
-
-```js
-editor.load(data);
-```
-
 
 ## License
 
