@@ -1,3 +1,10 @@
+const space = " ";
+const escapedSpace = "&nbsp;";
+
+const styleElement = document.createElement("style");
+styleElement.appendChild(document.createTextNode(".sled-editor {white-space: pre-wrap;}"));
+document.head.appendChild(styleElement);
+
 const createVNode = (tag, content, children) => {
   if(content === undefined) {
     return {
@@ -32,10 +39,10 @@ const createNode = (vnode) => {
         node.appendChild(createNode(children[i]));
       }
     }
-
-    vnode.node = node;
-    node.__SLED__VNODE__ = vnode;
   }
+
+  vnode.node = node;
+  node.__SLED__VNODE__ = vnode;
 
   return node;
 }
@@ -68,6 +75,9 @@ function Sled(el) {
 
   // Set Content Editable
   this.el.setAttribute("contenteditable", "true");
+
+  // Set Class
+  this.el.setAttribute("class", "sled-editor");
 
   // Attach Listeners
   var self = this;
@@ -105,7 +115,7 @@ Sled.prototype.editText = function(e) {
   if(e.keyCode === 13) {
     // Enter
   } else {
-    const key = e.key;
+    let key = e.key;
 
     if(anchorNode === focusNode) {
       // Selection is within the same node
@@ -121,6 +131,16 @@ Sled.prototype.editText = function(e) {
           parentAnchorNode.appendChild(firstChild);
 
           moveCursorEnd(firstChild, selection);
+        } else {
+          // Add text to text node
+          const vnode = anchorNode.__SLED__VNODE__;
+          const content = vnode.content;
+          const newText = content.substring(0, anchorOffset) + key + content.substring(anchorOffset);
+
+          vnode.content = newText;
+          anchorNode.textContent = newText;
+
+          moveCursor(anchorNode, anchorOffset + 1, selection);
         }
       }
     }

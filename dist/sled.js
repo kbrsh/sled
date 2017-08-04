@@ -9,6 +9,13 @@
   /* ======= Global Sled ======= */
   (typeof module === "object" && module.exports) ? module.exports = factory() : root.Sled = factory();
 }(this, function() {
+    var space = " ";
+    var escapedSpace = "&nbsp;";
+    
+    var styleElement = document.createElement("style");
+    styleElement.appendChild(document.createTextNode(".sled-editor {white-space: pre-wrap;}"));
+    document.head.appendChild(styleElement);
+    
     var createVNode = function (tag, content, children) {
       if(content === undefined) {
         return {
@@ -43,10 +50,10 @@
             node.appendChild(createNode(children[i]));
           }
         }
-    
-        vnode.node = node;
-        node.__SLED__VNODE__ = vnode;
       }
+    
+      vnode.node = node;
+      node.__SLED__VNODE__ = vnode;
     
       return node;
     }
@@ -79,6 +86,9 @@
     
       // Set Content Editable
       this.el.setAttribute("contenteditable", "true");
+    
+      // Set Class
+      this.el.setAttribute("class", "sled-editor");
     
       // Attach Listeners
       var self = this;
@@ -132,6 +142,16 @@
               parentAnchorNode.appendChild(firstChild);
     
               moveCursorEnd(firstChild, selection);
+            } else {
+              // Add text to text node
+              var vnode = anchorNode.__SLED__VNODE__;
+              var content = vnode.content;
+              var newText = content.substring(0, anchorOffset) + key + content.substring(anchorOffset);
+    
+              vnode.content = newText;
+              anchorNode.textContent = newText;
+    
+              moveCursor(anchorNode, anchorOffset + 1, selection);
             }
           }
         }
