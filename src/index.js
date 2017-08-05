@@ -63,6 +63,14 @@ const moveCursor = (el, offset, selection) => {
   selection.addRange(range);
 }
 
+const moveCursorStart = (el, selection) => {
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
 const moveCursorEnd = (el, selection) => {
   const range = document.createRange();
   range.selectNodeContents(el);
@@ -150,12 +158,18 @@ Sled.prototype.editText = function(e) {
         const parent = anchorNode.parentNode;
         const grandParent = parent.parentNode;
 
+        let newNode = null;
+
         if(parent.nextSibling === null) {
           // Append to end of list
           const newVNode = createEmptyVNode(grandChildren.length, grandVNode);
           grandChildren.push(newVNode);
-          parent.parentNode.appendChild(createNode(newVNode));
+
+          newNode = createNode(newVNode);
+          parent.parentNode.appendChild(newNode);
         }
+
+        moveCursorStart(newNode, selection);
       }
     }
   } else {

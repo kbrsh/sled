@@ -74,6 +74,14 @@
       selection.addRange(range);
     }
     
+    var moveCursorStart = function (el, selection) {
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    
     var moveCursorEnd = function (el, selection) {
       var range = document.createRange();
       range.selectNodeContents(el);
@@ -161,12 +169,18 @@
             var parent = anchorNode.parentNode;
             var grandParent = parent.parentNode;
     
+            var newNode = null;
+    
             if(parent.nextSibling === null) {
               // Append to end of list
               var newVNode = createEmptyVNode(grandChildren.length, grandVNode);
               grandChildren.push(newVNode);
-              parent.parentNode.appendChild(createNode(newVNode));
+    
+              newNode = createNode(newVNode);
+              parent.parentNode.appendChild(newNode);
             }
+    
+            moveCursorStart(newNode, selection);
           }
         }
       } else {
