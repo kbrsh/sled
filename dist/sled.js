@@ -9,9 +9,6 @@
   /* ======= Global Sled ======= */
   (typeof module === "object" && module.exports) ? module.exports = factory() : root.Sled = factory();
 }(this, function() {
-    var space = " ";
-    var escapedSpace = "&nbsp;";
-    
     var styleElement = document.createElement("style");
     styleElement.appendChild(document.createTextNode(".sled-editor {white-space: pre-wrap;}"));
     document.head.appendChild(styleElement);
@@ -120,6 +117,12 @@
         focusNode = focusNode.firstChild;
       }
     
+      if(anchorOffset > focusOffset) {
+        var anchorTemp = anchorOffset;
+        anchorOffset = focusOffset;
+        focusOffset = anchorTemp;
+      }
+    
       var parentAnchorNode = anchorNode.parentNode;
       var parentFocusNode = focusNode.parentNode;
     
@@ -130,29 +133,26 @@
     
         if(anchorNode === focusNode) {
           // Selection is within the same node
-          if(selection.isCollapsed === true) {
-            // Selection is collapsed
-            if(anchorNode.nodeName === "BR") {
-              // Add text to empty node
-              var newVNode = createVNode("#text", key, []);
-              parentAnchorNode.__SLED__VNODE__.children[0] = newVNode;
+          if(anchorNode.nodeName === "BR") {
+            // Add text to empty node
+            var newVNode = createVNode("#text", key, []);
+            parentAnchorNode.__SLED__VNODE__.children[0] = newVNode;
     
-              var firstChild = createNode(newVNode);
-              parentAnchorNode.removeChild(anchorNode);
-              parentAnchorNode.appendChild(firstChild);
+            var firstChild = createNode(newVNode);
+            parentAnchorNode.removeChild(anchorNode);
+            parentAnchorNode.appendChild(firstChild);
     
-              moveCursorEnd(firstChild, selection);
-            } else {
-              // Add text to text node
-              var vnode = anchorNode.__SLED__VNODE__;
-              var content = vnode.content;
-              var newText = content.substring(0, anchorOffset) + key + content.substring(anchorOffset);
+            moveCursorEnd(firstChild, selection);
+          } else {
+            // Add text to text node
+            var vnode = anchorNode.__SLED__VNODE__;
+            var content = vnode.content;
+            var newText = content.substring(0, anchorOffset) + key + content.substring(focusOffset);
     
-              vnode.content = newText;
-              anchorNode.textContent = newText;
+            vnode.content = newText;
+            anchorNode.textContent = newText;
     
-              moveCursor(anchorNode, anchorOffset + 1, selection);
-            }
+            moveCursor(anchorNode, anchorOffset + 1, selection);
           }
         }
       }

@@ -1,6 +1,3 @@
-const space = " ";
-const escapedSpace = "&nbsp;";
-
 const styleElement = document.createElement("style");
 styleElement.appendChild(document.createTextNode(".sled-editor {white-space: pre-wrap;}"));
 document.head.appendChild(styleElement);
@@ -109,6 +106,12 @@ Sled.prototype.editText = function(e) {
     focusNode = focusNode.firstChild;
   }
 
+  if(anchorOffset > focusOffset) {
+    const anchorTemp = anchorOffset;
+    anchorOffset = focusOffset;
+    focusOffset = anchorTemp;
+  }
+
   const parentAnchorNode = anchorNode.parentNode;
   const parentFocusNode = focusNode.parentNode;
 
@@ -119,29 +122,26 @@ Sled.prototype.editText = function(e) {
 
     if(anchorNode === focusNode) {
       // Selection is within the same node
-      if(selection.isCollapsed === true) {
-        // Selection is collapsed
-        if(anchorNode.nodeName === "BR") {
-          // Add text to empty node
-          const newVNode = createVNode("#text", key, []);
-          parentAnchorNode.__SLED__VNODE__.children[0] = newVNode;
+      if(anchorNode.nodeName === "BR") {
+        // Add text to empty node
+        const newVNode = createVNode("#text", key, []);
+        parentAnchorNode.__SLED__VNODE__.children[0] = newVNode;
 
-          const firstChild = createNode(newVNode);
-          parentAnchorNode.removeChild(anchorNode);
-          parentAnchorNode.appendChild(firstChild);
+        const firstChild = createNode(newVNode);
+        parentAnchorNode.removeChild(anchorNode);
+        parentAnchorNode.appendChild(firstChild);
 
-          moveCursorEnd(firstChild, selection);
-        } else {
-          // Add text to text node
-          const vnode = anchorNode.__SLED__VNODE__;
-          const content = vnode.content;
-          const newText = content.substring(0, anchorOffset) + key + content.substring(anchorOffset);
+        moveCursorEnd(firstChild, selection);
+      } else {
+        // Add text to text node
+        const vnode = anchorNode.__SLED__VNODE__;
+        const content = vnode.content;
+        const newText = content.substring(0, anchorOffset) + key + content.substring(focusOffset);
 
-          vnode.content = newText;
-          anchorNode.textContent = newText;
+        vnode.content = newText;
+        anchorNode.textContent = newText;
 
-          moveCursor(anchorNode, anchorOffset + 1, selection);
-        }
+        moveCursor(anchorNode, anchorOffset + 1, selection);
       }
     }
   }
