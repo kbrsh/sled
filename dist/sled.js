@@ -13,21 +13,32 @@
     styleElement.appendChild(document.createTextNode(".sled-editor {white-space: pre-wrap;}"));
     document.head.appendChild(styleElement);
     
-    var createVNode = function (tag, content, children) {
+    var createVNode = function (tag, content, index, parent, children) {
       if(content === undefined) {
         return {
           type: tag,
+          index: index,
+          parent: parent,
           children: children,
           node: null
         }
       } else {
         return {
           type: tag,
+          index: index,
+          parent: parent,
           content: content,
           children: children,
           node: null
         }
       }
+    }
+    
+    var createEmptyVNode = function (index, parent) {
+      var p = createVNode("p", undefined, index, parent, []);
+      var br = createVNode("br", undefined, 0, p, []);
+      p.children = [br];
+      return p;
     }
     
     var createNode = function (vnode) {
@@ -76,10 +87,20 @@
       this.el = document.querySelector(el);
     
       // Initial Data
-      this.data = createVNode("p", undefined, [createVNode("br", undefined, [])]);
+      this.data = {
+        type: "ROOT",
+        index: null,
+        parent: null,
+        children: [],
+        node: null
+      };
+    
+      var p = createEmptyVNode(0, this.data);
+      this.data.children = [p];
+    
     
       // Initial Node
-      this.el.appendChild(createNode(this.data));
+      this.el.appendChild(createNode(p));
     
       // Set Content Editable
       this.el.setAttribute("contenteditable", "true");
@@ -128,6 +149,26 @@
     
       if(e.keyCode === 13) {
         // Enter
+        if(anchorNode === focusNode) {
+          // Selection is within the same node
+          if(selection.isCollapsed === true) {
+            // Selection is collapsed
+            var vnode = anchorNode.__SLED__VNODE__;
+            var parentVNode = vnode.parent;
+            var grandVNode = parentVNode.parent;
+            var grandChildren = grandVNode.children;
+    
+            var parent = anchorNode.parentNode;
+            var grandParent = parent.parentNode;
+    
+            if(parent.nextSibling === null) {
+              // Append to end of list
+              var newVNode = createEmptyVNode(grandChildren.length, grandVNode);
+              grandChildren.push(newVNode);
+              parent.parentNode.appendChild(createNode(newVNode));
+            }
+          }
+        }
       } else {
         var key = e.key;
     
@@ -135,21 +176,22 @@
           // Selection is within the same node
           if(anchorNode.nodeName === "BR") {
             // Add text to empty node
-            var newVNode = createVNode("#text", key, []);
-            parentAnchorNode.__SLED__VNODE__.children[0] = newVNode;
+            var parentVNode$1 = parentAnchorNode.__SLED__VNODE__;
+            var newVNode$1 = createVNode("#text", key, 0, parentVNode$1, []);
+            parentVNode$1.children[0] = newVNode$1;
     
-            var firstChild = createNode(newVNode);
+            var firstChild = createNode(newVNode$1);
             parentAnchorNode.removeChild(anchorNode);
             parentAnchorNode.appendChild(firstChild);
     
             moveCursorEnd(firstChild, selection);
           } else {
             // Add text to text node
-            var vnode = anchorNode.__SLED__VNODE__;
-            var content = vnode.content;
+            var vnode$1 = anchorNode.__SLED__VNODE__;
+            var content = vnode$1.content;
             var newText = content.substring(0, anchorOffset) + key + content.substring(focusOffset);
     
-            vnode.content = newText;
+            vnode$1.content = newText;
             anchorNode.textContent = newText;
     
             moveCursor(anchorNode, anchorOffset + 1, selection);

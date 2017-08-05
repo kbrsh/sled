@@ -2,21 +2,32 @@ const styleElement = document.createElement("style");
 styleElement.appendChild(document.createTextNode(".sled-editor {white-space: pre-wrap;}"));
 document.head.appendChild(styleElement);
 
-const createVNode = (tag, content, children) => {
+const createVNode = (tag, content, index, parent, children) => {
   if(content === undefined) {
     return {
       type: tag,
+      index: index,
+      parent: parent,
       children: children,
       node: null
     }
   } else {
     return {
       type: tag,
+      index: index,
+      parent: parent,
       content: content,
       children: children,
       node: null
     }
   }
+}
+
+const createEmptyVNode = (index, parent) => {
+  const p = createVNode("p", undefined, index, parent, []);
+  const br = createVNode("br", undefined, 0, p, []);
+  p.children = [br];
+  return p;
 }
 
 const createNode = (vnode) => {
@@ -65,10 +76,20 @@ function Sled(el) {
   this.el = document.querySelector(el);
 
   // Initial Data
-  this.data = createVNode("p", undefined, [createVNode("br", undefined, [])]);
+  this.data = {
+    type: "ROOT",
+    index: null,
+    parent: null,
+    children: [],
+    node: null
+  };
+
+  const p = createEmptyVNode(0, this.data);
+  this.data.children = [p];
+
 
   // Initial Node
-  this.el.appendChild(createNode(this.data));
+  this.el.appendChild(createNode(p));
 
   // Set Content Editable
   this.el.setAttribute("contenteditable", "true");
@@ -117,6 +138,26 @@ Sled.prototype.editText = function(e) {
 
   if(e.keyCode === 13) {
     // Enter
+    if(anchorNode === focusNode) {
+      // Selection is within the same node
+      if(selection.isCollapsed === true) {
+        // Selection is collapsed
+        const vnode = anchorNode.__SLED__VNODE__;
+        const parentVNode = vnode.parent;
+        const grandVNode = parentVNode.parent;
+        const grandChildren = grandVNode.children;
+
+        const parent = anchorNode.parentNode;
+        const grandParent = parent.parentNode;
+
+        if(parent.nextSibling === null) {
+          // Append to end of list
+          const newVNode = createEmptyVNode(grandChildren.length, grandVNode);
+          grandChildren.push(newVNode);
+          parent.parentNode.appendChild(createNode(newVNode));
+        }
+      }
+    }
   } else {
     let key = e.key;
 
@@ -124,8 +165,9 @@ Sled.prototype.editText = function(e) {
       // Selection is within the same node
       if(anchorNode.nodeName === "BR") {
         // Add text to empty node
-        const newVNode = createVNode("#text", key, []);
-        parentAnchorNode.__SLED__VNODE__.children[0] = newVNode;
+        const parentVNode = parentAnchorNode.__SLED__VNODE__;
+        const newVNode = createVNode("#text", key, 0, parentVNode, []);
+        parentVNode.children[0] = newVNode;
 
         const firstChild = createNode(newVNode);
         parentAnchorNode.removeChild(anchorNode);
