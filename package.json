@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KingPixil/sled.git"
+    "url": "git+https://github.com/kbrsh/sled.git"
   },
   "author": "Kabir Shah",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/KingPixil/sled/issues"
+    "url": "https://github.com/kbrsh/sled/issues"
   },
-  "homepage": "https://github.com/KingPixil/sled#readme",
+  "homepage": "https://github.com/kbrsh/sled#readme",
   "devDependencies": {
     "buble": "^0.15.2",
     "gulp": "^3.9.1",
